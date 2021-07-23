@@ -36,11 +36,11 @@
       <v-spacer />
     </v-app-bar>
     <!-- コンテンツ部分 -->
-    <v-content>
-      <v-main fluid pa-10>
+    <v-main>
+      <v-container fluid pa-10>
         <nuxt />
-      </v-main>
-    </v-content>
+      </v-container>
+    </v-main>
     <!-- フッター部分 -->
     <v-footer
       :fixed="fixed"

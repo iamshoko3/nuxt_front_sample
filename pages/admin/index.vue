@@ -20,8 +20,59 @@
         :sort-desc="true"
         class="elevation-1"
       >
+
+      <template #top>
+          <v-dialog v-model="isShowDialog" max-width="500px">
+            <template #activator="{ on }">
+              <v-btn fab dark color="green" class="mb-2"
+               v-on="on" @click="onClickAddBtn"
+              >
+                <v-icon dark>
+                  mdi-plus
+                </v-icon>
+              </v-btn>
+            </template>
+            <v-card>
+              <v-card-title>
+                <span class="headline">管理者編集</span>
+              </v-card-title>
+              <v-card-text>
+                <v-container>
+                  <v-row>
+                    <v-col cols="6">
+                      <v-text-field v-model="dialogAdminUser.email" label="メールアドレス" />
+                    </v-col>
+                    <v-col cols="6">
+                      <v-text-field v-model="dialogAdminUser.name" label="名前" />
+                    </v-col>
+                    <v-col cols="12">
+                      <v-text-field v-model="dialogAdminUser.password" type="password" label="パスワード" />
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer />
+                <v-btn @click="closeDialog">閉じる</v-btn>
+                <v-btn v-if="isPersistedAdminUser" class="primary" @click="onClickUpdateBtn">更新する</v-btn>
+                <v-btn v-else class="primary" @click="onClickCreateBtn">追加する</v-btn>
+                <v-spacer />
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </template>
+
         <template #[`item.edit-action`]="{ item }">
           <v-icon small @click="onClickEditIcon(item)"> mdi-pencil </v-icon>
+        </template>
+
+        <template #[`item.delete-action`]="{ item }">
+          <v-icon
+            small
+            @click="onClickDeleteIcon(item)"
+          >
+            mdi-delete
+          </v-icon>
         </template>
       </v-data-table>
     </v-card>
@@ -47,6 +98,9 @@ export default {
     adminUsers() {
       return this.$store.getters['adminUsers/list']
     },
+    formTitle () {
+      return this.isPersistedAdminUser ? '管理者編集' : '管理者追加'
+    },
     headers() {
       return [
         { text: 'ID', value: 'id' },
@@ -56,12 +110,40 @@ export default {
         { text: '', value: 'delete-action' },
       ]
     },
+
+    isPersistedAdminUser () {
+      return !!this.dialogAdminUser.id
+    },
   },
   methods: {
+    closeDialog () {
+      this.isShowDialog = false
+      setTimeout(() => {
+        this.dialogAdminUser = {}
+      }, 1000)
+    },
+
+    onClickAddBtn () {
+      this.dialogAdminUser = {}
+      this.isShowDialog = true
+    },
+
     onClickEditIcon(adminUser) {
       this.dialogAdminUser = Object.assign({}, adminUser)
       this.isShowDialog = true
     },
+    async onClickCreateBtn () {
+      await this.$store.dispatch('adminUsers/create', this.dialogAdminUser)
+      this.closeDialog()
+    },
+    async onClickDeleteIcon (adminUser) {
+      await this.$store.dispatch('adminUsers/delete', adminUser)
+    },
+    async onClickUpdateBtn () {
+      await this.$store.dispatch('adminUsers/update', this.dialogAdminUser)
+      this.closeDialog()
+    }
+    
   }
 }
 </script>

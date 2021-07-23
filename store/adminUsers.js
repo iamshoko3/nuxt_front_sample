@@ -12,6 +12,19 @@ export const mutations = {
   setList (state, data) {
     state.adminUsers = data
   },
+
+  create (state, data) {
+    state.adminUsers.push(data)
+  },
+
+  delete (state, data) {
+    state.adminUsers.forEach((adminUser, index) => {
+      if (adminUser.id === data.id) {
+        state.adminUsers.splice(index, 1)
+      }
+    })
+  },
+
   update (state, data) {
     state.adminUsers.forEach((adminUser, index) => {
       if (adminUser.id === data.id) {
@@ -28,6 +41,23 @@ export const actions = {
         console.log(err) // eslint-disable-line no-console
       })
   },
+
+  async create ({ commit }, adminUser) {
+    const response = await this.$axios.$post('/admin_users', adminUser)
+      .catch(err => {
+        console.log(err) // eslint-disable-line no-console
+      })
+    commit('create', response)
+  },
+
+  async delete ({ commit }, adminUser) {
+    const response = await this.$axios.$delete(`/admin_users/${adminUser.id}`)
+      .catch(err => {
+        console.log(err) // eslint-disable-line no-console
+      })
+    commit('delete', response)
+  },
+
   async update ({ commit }, adminUser) {
     const response = await this.$axios.$patch(`/admin_users/${adminUser.id}`, adminUser)
       .catch(err => {
