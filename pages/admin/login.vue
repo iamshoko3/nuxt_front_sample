@@ -1,17 +1,11 @@
 <template>
   <section>
-    <h1>Login</h1>
-    <form @submit.prevent="submit">
-      <div>
-        <label for="email">email</label>
-        <input id="email"  v-model="email" type="text" />
-      </div>
-      <div>
-        <label for="password">password</label>
-        <input id="password"  v-model="password" type="password" />
-      </div>
-      <button type="submit">login</button>
-    </form>
+    <h1 class="display-1 mt-5">管理者ログイン</h1>
+    <v-form @submit.prevent="submit">
+      <v-text-field v-model="email" label="メールアドレス" />
+      <v-text-field v-model="password" type="password" label="パスワード" />
+      <v-btn type="submit" class="info">ログイン</v-btn>
+    </v-form>
   </section>
 </template>
 
